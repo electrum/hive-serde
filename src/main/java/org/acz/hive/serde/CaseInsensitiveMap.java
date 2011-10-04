@@ -1,14 +1,14 @@
 package org.acz.hive.serde;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class CaseInsensitiveMap<V>
         implements Map<String, V>
 {
-    Map<String, V> map = new HashMap<String, V>();
+    Map<String, V> map = new LinkedHashMap<String, V>();
 
     @Override
     public int size()
@@ -55,7 +55,7 @@ public class CaseInsensitiveMap<V>
     @Override
     public Set<String> keySet()
     {
-        throw new UnsupportedOperationException("keySet not supported");
+        return map.keySet();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class CaseInsensitiveMap<V>
     @Override
     public Set<Entry<String, V>> entrySet()
     {
-        throw new UnsupportedOperationException("entrySet not supported");
+        return map.entrySet();
     }
 
     @Override
