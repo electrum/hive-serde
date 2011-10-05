@@ -8,7 +8,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class JsonEventSerde
@@ -24,12 +23,12 @@ public class JsonEventSerde
     {
         super.initialize(configuration, table);
 
-        timestampColumn = columnNameMap.get("ts");
+        timestampColumn = columnNameMap.getColumnNames(rootTypeInfo).get("ts");
     }
 
     @Override
     protected Object[] buildStruct(JsonNode tree)
-            throws IOException, SerDeException
+            throws SerDeException
     {
         if (!tree.has("data")) {
             throw new SerDeException("data field is missing");
