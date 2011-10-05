@@ -1,4 +1,4 @@
-package org.acz.hive.serde;
+package com.proofpoint.hive.serde;
 
 import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;

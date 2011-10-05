@@ -1,4 +1,4 @@
-package org.acz.hive.serde;
+package com.proofpoint.hive.serde;
 
 import org.testng.annotations.Test;
 

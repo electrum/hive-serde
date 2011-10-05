@@ -1,4 +1,4 @@
-package org.acz.hive.serde;
+package com.proofpoint.hive.serde;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

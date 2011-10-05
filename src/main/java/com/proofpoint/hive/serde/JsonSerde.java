@@ -1,4 +1,4 @@
-package org.acz.hive.serde;
+package com.proofpoint.hive.serde;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde.Constants;
