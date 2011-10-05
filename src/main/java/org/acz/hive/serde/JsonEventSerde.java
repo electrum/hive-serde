@@ -32,11 +32,11 @@ public class JsonEventSerde
             throws IOException, SerDeException
     {
         if (!tree.has("data")) {
-            throw new IOException("data field is missing");
+            throw new SerDeException("data field is missing");
         }
         JsonNode dataNode = tree.get("data");
         if (!dataNode.isObject()) {
-            throw new IOException("data field is not an object");
+            throw new SerDeException("data field is not an object");
         }
 
         Object[] struct = processFields(dataNode);
@@ -49,21 +49,21 @@ public class JsonEventSerde
     }
 
     private static long parseTimestamp(JsonNode tree)
-            throws IOException
+            throws SerDeException
     {
         if (!tree.has("timestamp")) {
-            throw new IOException("timestamp field is missing");
+            throw new SerDeException("timestamp field is missing");
         }
         JsonNode node = tree.get("timestamp");
         if (!node.isTextual()) {
-            throw new IOException("timestamp field is not text");
+            throw new SerDeException("timestamp field is not text");
         }
         String timestamp = node.getTextValue();
         try {
             return ISO_FORMATTER.parseMillis(timestamp);
         }
         catch (Exception e) {
-            throw new IOException("invalid timestamp: " + timestamp);
+            throw new SerDeException("invalid timestamp: " + timestamp);
         }
     }
 }
