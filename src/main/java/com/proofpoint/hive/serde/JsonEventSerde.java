@@ -23,6 +23,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.Map;
 import java.util.Properties;
 
 public class JsonEventSerde
@@ -30,6 +31,8 @@ public class JsonEventSerde
 {
     public static final DateTimeFormatter ISO_FORMATTER = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
     public static final DateTimeFormatter HIVE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd' 'HH:mm:ss").withZone(DateTimeZone.UTC);
+    private Integer uuidColumn;
+    private Integer hostColumn;
     private Integer timestampColumn;
 
     @Override
@@ -38,7 +41,10 @@ public class JsonEventSerde
     {
         super.initialize(configuration, table);
 
-        timestampColumn = columnNameMap.getColumnNames(rootTypeInfo).get("ts");
+        Map<String, Integer> columnNames = columnNameMap.getColumnNames(rootTypeInfo);
+        uuidColumn = columnNames.get("uuid");
+        hostColumn = columnNames.get("host");
+        timestampColumn = columnNames.get("ts");
     }
 
     @Override
@@ -55,29 +61,41 @@ public class JsonEventSerde
 
         Object[] struct = processFields(dataNode);
 
+        if (uuidColumn != null) {
+            struct[uuidColumn] = getTextNode(tree, "uuid");
+        }
+        if (hostColumn != null) {
+            struct[hostColumn] = getTextNode(tree, "host");
+        }
         if (timestampColumn != null) {
-            struct[timestampColumn] = HIVE_FORMATTER.print(parseTimestamp(tree));
+            long ts = parseTimestamp(getTextNode(tree, "timestamp"));
+            struct[timestampColumn] = HIVE_FORMATTER.print(ts);
         }
 
         return struct;
     }
 
-    private static long parseTimestamp(JsonNode tree)
+    private static long parseTimestamp(String timestamp)
             throws SerDeException
     {
-        if (!tree.has("timestamp")) {
-            throw new SerDeException("timestamp field is missing");
-        }
-        JsonNode node = tree.get("timestamp");
-        if (!node.isTextual()) {
-            throw new SerDeException("timestamp field is not text");
-        }
-        String timestamp = node.getTextValue();
         try {
             return ISO_FORMATTER.parseMillis(timestamp);
         }
         catch (Exception e) {
             throw new SerDeException("invalid timestamp: " + timestamp);
         }
+    }
+
+    private static String getTextNode(JsonNode tree, String field)
+            throws SerDeException
+    {
+        if (!tree.has(field)) {
+            throw new SerDeException(field + " field is missing");
+        }
+        JsonNode node = tree.get(field);
+        if (!node.isTextual()) {
+            throw new SerDeException(field + " field is not text");
+        }
+        return node.getTextValue();
     }
 }
