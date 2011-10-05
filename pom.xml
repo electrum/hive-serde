@@ -8,7 +8,26 @@
     <packaging>jar</packaging>
 
     <name>hive-serde</name>
-    <url>https://github.com/electrum/hive-serde</url>
+    <url>https://github.com/proofpoint/hive-serde</url>
+
+    <scm>
+        <connection>scm:git:git://github.com/proofpoint/hive-serde.git</connection>
+        <developerConnection>scm:git:git@github.com:proofpoint/hive-serde.git</developerConnection>
+        <url>https://github.com/proofpoint/hive-serde</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
