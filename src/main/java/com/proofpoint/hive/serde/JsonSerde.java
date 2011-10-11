@@ -54,6 +54,7 @@ public class JsonSerde
     private ObjectInspector rowObjectInspector;
     protected StructTypeInfo rootTypeInfo;
     protected ColumnNameMap columnNameMap;
+    private boolean ignoreErrors;
 
     @Override
     public void initialize(Configuration configuration, Properties table)
@@ -78,6 +79,8 @@ public class JsonSerde
         rowObjectInspector = getStandardJavaObjectInspectorFromTypeInfo(rootTypeInfo);
 
         columnNameMap = new ColumnNameMap(rootTypeInfo);
+
+        ignoreErrors = Boolean.parseBoolean(table.getProperty("errors.ignore"));
     }
 
     @Override
@@ -100,8 +103,21 @@ public class JsonSerde
         if (!(writable instanceof BinaryComparable)) {
             throw new SerDeException("expected BinaryComparable: " + writable.getClass().getName());
         }
-        BinaryComparable binary = (BinaryComparable) writable;
 
+        try {
+            return doDeserialize((BinaryComparable) writable);
+        }
+        catch (SerDeException e) {
+            if (ignoreErrors) {
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    private Object doDeserialize(BinaryComparable binary)
+            throws SerDeException
+    {
         try {
             JsonParser jsonParser = jsonFactory.createJsonParser(binary.getBytes(), 0, binary.getLength());
             return buildStruct(jsonParser.readValueAsTree());
